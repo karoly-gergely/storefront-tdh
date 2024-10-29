@@ -8,7 +8,7 @@ WORKDIR /app
 
 # Get PNPM version from package.json
 RUN export PNPM_VERSION=$(cat package.json | jq '.engines.pnpm' | sed -E 's/[^0-9.]//g')
-
+ENV SKIP_YARN_COREPACK_CHECK=0
 COPY package.json pnpm-lock.yaml ./
 RUN yarn global add pnpm@$PNPM_VERSION
 RUN pnpm i --frozen-lockfile --prefer-offline
@@ -25,6 +25,7 @@ COPY . .
 # ENV NEXT_TELEMETRY_DISABLED 1
 
 ENV NEXT_OUTPUT=standalone
+ENV SKIP_YARN_COREPACK_CHECK=0
 ARG NEXT_PUBLIC_SALEOR_API_URL
 ENV NEXT_PUBLIC_SALEOR_API_URL=${NEXT_PUBLIC_SALEOR_API_URL}
 ARG NEXT_PUBLIC_STOREFRONT_URL
@@ -33,6 +34,8 @@ ENV NEXT_PUBLIC_STOREFRONT_URL=${NEXT_PUBLIC_STOREFRONT_URL}
 # Get PNPM version from package.json
 RUN export PNPM_VERSION=$(cat package.json | jq '.engines.pnpm' | sed -E 's/[^0-9.]//g')
 RUN yarn global add pnpm@$PNPM_VERSION
+
+RUN pnpm exec next telemetry disable
 
 RUN pnpm build
 
@@ -45,6 +48,7 @@ ENV NODE_ENV production
 # ENV NEXT_TELEMETRY_DISABLED 1
 
 ARG NEXT_PUBLIC_SALEOR_API_URL
+ENV SKIP_YARN_COREPACK_CHECK=0
 ENV NEXT_PUBLIC_SALEOR_API_URL=${NEXT_PUBLIC_SALEOR_API_URL}
 ARG NEXT_PUBLIC_STOREFRONT_URL
 ENV NEXT_PUBLIC_STOREFRONT_URL=${NEXT_PUBLIC_STOREFRONT_URL}
@@ -64,6 +68,5 @@ COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
 COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
 
 USER nextjs
-
 
 CMD ["node", "server.js"]
