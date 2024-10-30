@@ -6,7 +6,7 @@ DOCKER_USER="kg97"
 DOCKER_IMAGE="saleor-storefront"
 API_URL="http://198.211.108.107:8000/graphql/"
 STORE_URL="http://198.211.108.107:3000/"
-NODE_ENV="production"
+NODE_ENV="development"
 LIB_FOLDER="/var/lib/saleor"
 
 # Check if running as root (for installation purposes)
