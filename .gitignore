@@ -3,6 +3,7 @@ gql/
 
 .env
 .env.docker
+*.env.docker
 
 # dependencies
 /node_modules

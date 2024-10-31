@@ -4,7 +4,7 @@
 DOCKER_COMPOSE_VERSION="1.29.2"
 DOCKER_USER="kg97"
 DOCKER_IMAGE="saleor-storefront"
-API_URL="http://198.211.108.107:8000/graphql/"
+API_URL="https://admin.terrisdraheim.com/graphql/"
 STORE_URL="http://198.211.108.107:3000/"
 NODE_ENV="development"
 LIB_FOLDER="/var/lib/saleor"
@@ -66,8 +66,10 @@ services:
       - saleor_network
 
   nginx:
-    image: nginx:latest
     container_name: nginx
+    build:
+      context: .
+      dockerfile: Dockerfile
     volumes:
       - ./nginx.conf:/etc/nginx/nginx.conf
     ports:
@@ -80,6 +82,11 @@ services:
 networks:
   saleor_network:
     driver: bridge
+EOF
+
+cat <<EOF >Dockerfile
+FROM nginx
+COPY nginx.conf /etc/nginx/nginx.conf
 EOF
 
 # Step 6: Create Nginx configuration
@@ -111,6 +118,6 @@ echo "Pulling images and starting services..."
 echo "dckr_pat_o610SdSucjGSc0lNBOoTAXovoTg" | docker login -u kg97 --password-stdin
 docker-compose --project-directory . down --remove-orphans
 docker-compose pull
-docker-compose up -d
+docker-compose up -d --build
 
 echo "Saleor Storefront and Nginx have been set up and started."
